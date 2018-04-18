@@ -1,0 +1,28 @@
+{
+  "name": "http-curl",
+  "version": "0.1.0",
+  "description": "",
+  "main": "test.js",
+  "files": [
+    "http_client.h",
+    "http_client.cc",
+    "http_client_v8.h",
+    "http_client_v8.cc",
+    "binding.gyp",
+    "package.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node-gyp rebuild"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "gypfile": true,
+  "dependencies": {
+    "nan": "^2.10.0",
+    "node-gyp": "^3.6.2"
+  }
+}
