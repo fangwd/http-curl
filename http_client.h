@@ -61,6 +61,12 @@ public:
     void set_proxy(const char *proxy);
     void set_user_agent(const char *name);
 
+    // max time a request may take
+    void set_timeout(size_t);
+
+    // max time for a low speed (bytes per second)
+    void set_timeout(size_t, size_t speed);
+
     void set_verbose(bool);
 
     const char *proxy() const { return proxy_.c_str(); }

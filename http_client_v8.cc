@@ -30,6 +30,7 @@ void Client::Init(Local<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(tpl, "setVerbose", SetVerbose);
 
   NODE_SET_PROTOTYPE_METHOD(tpl, "setHeader", SetHeader);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "setTimeout", SetTimeout);
 
   exports->Set(String::NewFromUtf8(isolate, "Client"), tpl->GetFunction());
 
@@ -239,6 +240,17 @@ void Client::SetHeader(const FunctionCallbackInfo<Value> &args) {
     std::string key = ToString(args[0]);
     std::string value = args.Length() > 1 ? ToString(args[1]) : "";
     client->set_header(key, value);
+}
+
+void Client::SetTimeout(const v8::FunctionCallbackInfo<v8::Value> &args) {
+    Client *client = ObjectWrap::Unwrap < Client > (args.Holder());
+    int32_t value = args[0]->Int32Value();
+    if (args.Length() > 1) {
+        int32_t speed = args[1]->Int32Value();
+        client->set_timeout(value, speed);
+    } else {
+        client->set_timeout(value);
+    }
 }
 
 }  // namespace http_v8

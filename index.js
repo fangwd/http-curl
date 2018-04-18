@@ -18,6 +18,14 @@ function setOptions(client, options) {
       case 'user-agent':
       case 'User-Agent':
         client.setUserAgent(value);
+        break;
+      case 'timeout':
+        if (Array.isArray(value)) {
+          client.setTimeout(value[0], value[1]);
+        } else {
+          client.setTimeout(value);
+        }
+        break;
       case 'headers':
         for (const name in value) {
           client.setHeader(name, value[name]);
@@ -34,12 +42,12 @@ function get(options, url) {
     url = options;
     options = {};
   }
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const client = new curl.Client(options);
     setOptions(client, options);
     client.get(url, (err, res) => {
-      if (err) throw err;
-      resolve(res);
+      if (err) reject(err);
+      else resolve(res);
     });
   });
 }

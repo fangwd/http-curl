@@ -141,6 +141,15 @@ void Client::set_user_agent(const char * name) {
     curl_easy_setopt(curl_, CURLOPT_USERAGENT, name);
 }
 
+void Client::set_timeout(size_t value) {
+    curl_easy_setopt(curl_, CURLOPT_TIMEOUT, value);
+}
+
+void Client::set_timeout(size_t value, size_t speed) {
+    curl_easy_setopt(curl_, CURLOPT_LOW_SPEED_TIME, value);
+    curl_easy_setopt(curl_, CURLOPT_LOW_SPEED_LIMIT, speed);
+}
+
 void Client::set_verbose(bool on) {
     curl_easy_setopt(curl_, CURLOPT_VERBOSE, on ? 1L : 0L);
 }

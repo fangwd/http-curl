@@ -32,6 +32,7 @@ private:
     static void SetVerbose(const v8::FunctionCallbackInfo<v8::Value> &);
 
     static void SetHeader(const v8::FunctionCallbackInfo<v8::Value> &);
+    static void SetTimeout(const v8::FunctionCallbackInfo<v8::Value> &);
 };
 
 }  // namespace http_v8
