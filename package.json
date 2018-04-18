@@ -1,8 +1,8 @@
 {
   "name": "http-curl",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
-  "main": "test.js",
+  "main": "index.js",
   "files": [
     "http_client.h",
     "http_client.cc",
