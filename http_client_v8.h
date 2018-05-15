@@ -33,6 +33,8 @@ private:
 
     static void SetHeader(const v8::FunctionCallbackInfo<v8::Value> &);
     static void SetTimeout(const v8::FunctionCallbackInfo<v8::Value> &);
+
+    static void SetFollowLocation(const v8::FunctionCallbackInfo<v8::Value> &);
 };
 
 }  // namespace http_v8

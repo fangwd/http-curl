@@ -67,6 +67,8 @@ public:
     // max time for a low speed (bytes per second)
     void set_timeout(size_t, size_t speed);
 
+    void set_follow_location(bool value);
+
     void set_verbose(bool);
 
     const char *proxy() const { return proxy_.c_str(); }

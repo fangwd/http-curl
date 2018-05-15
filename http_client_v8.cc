@@ -31,6 +31,7 @@ void Client::Init(Local<Object> exports) {
 
   NODE_SET_PROTOTYPE_METHOD(tpl, "setHeader", SetHeader);
   NODE_SET_PROTOTYPE_METHOD(tpl, "setTimeout", SetTimeout);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "followLocation", SetFollowLocation);
 
   exports->Set(String::NewFromUtf8(isolate, "Client"), tpl->GetFunction());
 
@@ -251,6 +252,12 @@ void Client::SetTimeout(const v8::FunctionCallbackInfo<v8::Value> &args) {
     } else {
         client->set_timeout(value);
     }
+}
+
+void Client::SetFollowLocation(const v8::FunctionCallbackInfo<v8::Value> &args) {
+    Client *client = ObjectWrap::Unwrap < Client > (args.Holder());
+    bool value = args.Length() == 0 ? true : args[0]->BooleanValue();
+    client->set_follow_location(value);
 }
 
 }  // namespace http_v8
