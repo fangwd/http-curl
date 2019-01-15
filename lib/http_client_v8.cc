@@ -5,6 +5,7 @@
 namespace http_v8 {
 
 using namespace v8;
+using node::AtExit;
 
 void InitAll(Local<Object> exports) {
     Client::Init(exports);
@@ -13,6 +14,10 @@ void InitAll(Local<Object> exports) {
 NODE_MODULE(http_curl, InitAll)
 
 Persistent<Function> Client::client_constructor;
+
+static void Cleanup(void* arg) {
+  curl_global_cleanup();
+}
 
 void Client::Init(Local<Object> exports) {
   Isolate* isolate = exports->GetIsolate();
@@ -29,13 +34,17 @@ void Client::Init(Local<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(tpl, "setUserAgent", SetUserAgent);
   NODE_SET_PROTOTYPE_METHOD(tpl, "setVerbose", SetVerbose);
 
+  NODE_SET_PROTOTYPE_METHOD(tpl, "setAcceptEncoding", SetAcceptEncoding);
   NODE_SET_PROTOTYPE_METHOD(tpl, "setHeader", SetHeader);
   NODE_SET_PROTOTYPE_METHOD(tpl, "setTimeout", SetTimeout);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "followLocation", SetFollowLocation);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "setFollowLocation", SetFollowLocation);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "setMaxRedirects", SetMaxRedirects);
 
   exports->Set(String::NewFromUtf8(isolate, "Client"), tpl->GetFunction());
 
   curl_global_init(CURL_GLOBAL_ALL);
+
+  AtExit(Cleanup, NULL);
 }
 
 static std::string ToString(Local<Value> value) {
@@ -108,8 +117,11 @@ static Local<Object> ResponseToObject(Isolate *isolate,
     result->Set(String::NewFromUtf8(isolate, "url"),
             String::NewFromUtf8(isolate, response->url().c_str()));
 
-    result->Set(String::NewFromUtf8(isolate, "status"),
+    result->Set(String::NewFromUtf8(isolate, "statusCode"),
             Integer::New(isolate, response->status_code()));
+
+    result->Set(String::NewFromUtf8(isolate, "httpVersion"),
+            String::NewFromUtf8(isolate, response->http_version()));
 
     const std::vector<std::string>& headers = response->headers();
     Local<Array> array = Array::New(isolate, headers.size() / 2);
@@ -153,8 +165,8 @@ void Client::RequestAfter(uv_work_t *req, int status) {
         error->Set(String::NewFromUtf8(isolate, "code"),
                 Integer::New(isolate, data->client->error_code()));
         error->Set(String::NewFromUtf8(isolate, "message"),
-                String::NewFromUtf8(isolate, data->client->error(),
-                        NewStringType::kNormal).ToLocalChecked());
+                        String::NewFromUtf8(isolate, data->client->error(),
+                                NewStringType::kNormal).ToLocalChecked());
         argv[0] = error;
         argv[1] = Undefined(isolate);
     } else {
@@ -236,6 +248,16 @@ void Client::SetVerbose(const FunctionCallbackInfo<Value> &args) {
     client->set_verbose(args[0]->BooleanValue());
 }
 
+void Client::SetAcceptEncoding(const FunctionCallbackInfo<Value> &args) {
+    Client *client = ObjectWrap::Unwrap<Client>(args.Holder());
+    if (args.Length() == 0 || args[0]->IsUndefined() || args[0]->IsNull()) {
+      client->set_accept_encoding(NULL);
+    }
+    else {
+      client->set_accept_encoding(ToString(args[1]).c_str());
+    }
+}
+
 void Client::SetHeader(const FunctionCallbackInfo<Value> &args) {
     Client *client = ObjectWrap::Unwrap<Client>(args.Holder());
     std::string key = ToString(args[0]);
@@ -258,6 +280,12 @@ void Client::SetFollowLocation(const v8::FunctionCallbackInfo<v8::Value> &args) 
     Client *client = ObjectWrap::Unwrap < Client > (args.Holder());
     bool value = args.Length() == 0 ? true : args[0]->BooleanValue();
     client->set_follow_location(value);
+}
+
+void Client::SetMaxRedirects(const v8::FunctionCallbackInfo<v8::Value> &args) {
+  Client *client = ObjectWrap::Unwrap<Client>(args.Holder());
+  int32_t value = args[0]->Int32Value();
+  client->set_max_redirects(value);
 }
 
 }  // namespace http_v8

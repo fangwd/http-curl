@@ -1,22 +1,20 @@
 {
   "name": "http-curl",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "http_client.h",
-    "http_client.cc",
-    "http_client_v8.h",
-    "http_client_v8.cc",
+    "dist",
+    "src",
+    "lib",
     "binding.gyp",
     "package.json",
-    "index.js",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "node-gyp rebuild"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +23,32 @@
   "dependencies": {
     "nan": "^2.10.0",
     "node-gyp": "^3.6.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.12",
+    "@types/node": "^10.12.18",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "/test/response\\.test.ts",
+    "testURL": "http://localhost/",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "verbose": false
   }
 }

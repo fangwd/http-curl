@@ -14,17 +14,20 @@ private:
     int status_code_;                   // CURLINFO_RESPONSE_CODE
     std::vector<std::string> headers_;
     std::string body_;
+    const char *http_version_;
 
     friend class Client;
 
 public:
-    Response(const char *url) : url_(url), status_code_(0) {}
+    Response(const char *url) : url_(url), status_code_(0), http_version_(NULL) {}
 
     int status_code() const { return status_code_; }
 
     std::string& url() { return url_; }
     std::string& body() { return body_; }
     std::vector<std::string>& headers() { return headers_; }
+
+    const char *http_version() { return http_version_; }
 };
 
 enum Method {
@@ -55,6 +58,8 @@ public:
     const char *error() const { return error_; }
     int error_code() const { return (int) curl_code_; }
 
+    void set_accept_encoding(const char *encoding);
+
     void set_header(std::string key, std::string value);
     void clear_header();
 
@@ -68,6 +73,7 @@ public:
     void set_timeout(size_t, size_t speed);
 
     void set_follow_location(bool value);
+    void set_max_redirects(int value);
 
     void set_verbose(bool);
 

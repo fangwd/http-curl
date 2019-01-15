@@ -31,10 +31,13 @@ private:
     static void SetUserAgent(const v8::FunctionCallbackInfo<v8::Value> &);
     static void SetVerbose(const v8::FunctionCallbackInfo<v8::Value> &);
 
+    static void SetAcceptEncoding(const v8::FunctionCallbackInfo<v8::Value> &);
+
     static void SetHeader(const v8::FunctionCallbackInfo<v8::Value> &);
     static void SetTimeout(const v8::FunctionCallbackInfo<v8::Value> &);
 
     static void SetFollowLocation(const v8::FunctionCallbackInfo<v8::Value> &);
+    static void SetMaxRedirects(const v8::FunctionCallbackInfo<v8::Value> &);
 };
 
 }  // namespace http_v8

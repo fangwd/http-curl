@@ -3,7 +3,7 @@
     {
       'target_name': 'http-curl',
       'include_dirs': [ "<!(node -e \"require('nan')\")" ],
-      'sources': [ 'http_client.cc', 'http_client_v8.cc', ],
+      'sources': [ 'lib/http_client.cc', 'lib/http_client_v8.cc', ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
       'ldflags': [ ],

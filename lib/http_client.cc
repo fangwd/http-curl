@@ -115,6 +115,11 @@ Client::~Client() {
     }
 }
 
+void Client::set_accept_encoding(const char *encoding) {
+  curl_easy_setopt(curl_, CURLOPT_ACCEPT_ENCODING, encoding);
+}
+
+// Order of headers is predefined: lib/http.c
 void Client::set_header(std::string key, std::string value) {
     if (value.size() > 0) {
         key += ": ";
@@ -142,16 +147,20 @@ void Client::set_user_agent(const char * name) {
 }
 
 void Client::set_timeout(size_t value) {
-    curl_easy_setopt(curl_, CURLOPT_TIMEOUT, value);
+    curl_easy_setopt(curl_, CURLOPT_TIMEOUT, value/1000);
 }
 
 void Client::set_timeout(size_t value, size_t speed) {
-    curl_easy_setopt(curl_, CURLOPT_LOW_SPEED_TIME, value);
+    curl_easy_setopt(curl_, CURLOPT_LOW_SPEED_TIME, value/1000);
     curl_easy_setopt(curl_, CURLOPT_LOW_SPEED_LIMIT, speed);
 }
 
 void Client::set_follow_location(bool value) {
     curl_easy_setopt(curl_, CURLOPT_FOLLOWLOCATION, (long)value);
+}
+
+void Client::set_max_redirects(int value) {
+  curl_easy_setopt(curl_, CURLOPT_MAXREDIRS, (long)value);
 }
 
 void Client::set_verbose(bool on) {
@@ -192,6 +201,22 @@ Response *Client::request(const char *url, Method method, const char *data,
             res->url_ = url;
         }
         curl_easy_getinfo(curl_, CURLINFO_RESPONSE_CODE, &res->status_code_);
+        long http_version;
+        curl_easy_getinfo(curl_, CURLINFO_HTTP_VERSION, &http_version);
+        switch (http_version) {
+        case CURL_HTTP_VERSION_1_0:
+          res->http_version_ = "1.0";
+          break;
+        case CURL_HTTP_VERSION_1_1:
+          res->http_version_ = "1.1";
+          break;
+        case CURL_HTTP_VERSION_2_0:
+          res->http_version_ = "2.0";
+          break;
+        default:
+          res->http_version_ = "0";
+          break;
+        }
         return res;
     }
 
